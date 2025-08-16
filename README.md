@@ -57,6 +57,10 @@ It color-codes results by severity and stores scan reports in the `reports/` dir
 5.  **Report Storage**
     - All raw Nikto scan results are saved to the `reports/` directory.
     - The subdomain list is also saved for reference.
+    - **The entire terminal output is logged to a timestamped file in the `reports/` directory.**
+
+6.  **Timing**
+    - **The script measures and reports the total time taken to complete all scans.**
 
 ---
 
