@@ -9,6 +9,7 @@ This script automates **subdomain discovery** and **security scanning** using:
 It color-codes results by severity and stores scan reports in the `reports/` directory.
 
 Please note that you need to run this as root or else most checks will fail
+
 ---
 
 ## Command-Line Flags
