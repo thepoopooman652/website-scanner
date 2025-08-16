@@ -1,0 +1,68 @@
+# Passive Domain & Subdomain Vulnerability Scanner
+
+This script automates **subdomain discovery** and **security scanning** using:
+- [subfinder](https://github.com/projectdiscovery/subfinder) (passive subdomain enumeration)
+- [WhatWeb](https://github.com/urbanadventurer/WhatWeb) (web technology fingerprinting)
+- [Nmap](https://nmap.org/) (port/service scan + vulnerability scripts)
+- [Nikto](https://cirt.net/Nikto2) (web vulnerability scanner)
+
+It color-codes results by severity and stores scan reports in the `reports/` directory.
+
+---
+
+## Command-Line Flags
+
+| Flag | Long Form | Description |
+|------|-----------|-------------|
+| `-d` | `--domain` | **(Required)** The root domain to scan. |
+| `-sd` | `--subdomains` | Comma-separated subdomains to include manually. |
+| `-sdscan` | `--subdomain-scan` | Passive subdomain scan using `subfinder`. |
+| `-sdscanb` | `--subdomain-scan-b` | Advanced passive subdomain scan using `subfinder -all`. |
+| `-tn` | `--tuned-nikto` | Enable tuned Nikto scan (`-Tuning 123456789abc`). |
+| `-h` | `--help` | Show usage information. |
+
+---
+
+## Script Workflow
+
+1. **Dependency Check**
+   - Verifies installation of:
+     - Go
+     - subfinder
+     - WhatWeb
+     - Nmap
+     - Nikto
+   - If a dependency is missing, the script prompts to install it automatically.
+
+2. **Subdomain Collection**
+   - Combines:
+     - Manual subdomains from `-sd`
+     - Passive scan results from `-sdscan` / `-sdscanb`
+   - Deduplicates the list.
+   - Saves final subdomains to a timestamped file in `reports/`.
+
+3. **Scanning Each Target**
+   - **WhatWeb**: Fingerprints web technologies.
+   - **Nmap**: Runs service/version detection and vulnerability scripts.
+   - **Nikto**: Runs in the background, scanning for web vulnerabilities.
+
+4. **Nikto Result Processing**
+   - After all Nikto scans finish, results are displayed:
+     - **Red** → High severity (`OSVDB`, `CVE`, `exploit`, `VULNERABLE`)
+     - **Yellow** → Warnings / potential issues
+     - **Green** → Informational messages
+
+5. **Report Storage**
+   - All raw Nikto scan results are saved to the `reports/` directory.
+   - Subdomain list is also saved for reference.
+
+---
+
+## Example Usage
+
+```bash
+# Scan example.com, discover subdomains, run tuned Nikto
+./scanner.sh -d example.com -sdscan -tn
+
+# Scan example.com with custom subdomains
+./scanner.sh -d example.com -sd www.example.com,api.example.com
