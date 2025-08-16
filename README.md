@@ -70,7 +70,7 @@ Please note that you need to run this as root or else most checks will fail
 
 ```bash
 # Scan example.com, discover subdomains, run tuned Nikto
-./scanner.sh -d example.com -sdscan -tn
+sudo ./site_audit.sh -d example.com -sdscan -tn
 
 # Scan example.com with custom subdomains
-./scanner.sh -d example.com -sd [www.example.com](https://www.example.com),api.example.com
+sudo ./site_audit.sh -d example.com -sd [www.example.com](https://www.example.com),api.example.com
