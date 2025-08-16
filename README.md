@@ -25,36 +25,38 @@ It color-codes results by severity and stores scan reports in the `reports/` dir
 
 ## Script Workflow
 
-1. **Dependency Check**
-   - Verifies installation of:
-     - Go
-     - subfinder
-     - WhatWeb
-     - Nmap
-     - Nikto
-   - If a dependency is missing, the script prompts to install it automatically.
+1.  **Dependency Check**
+    - Verifies installation of:
+      - Go
+      - subfinder
+      - WhatWeb
+      - Nmap
+      - Nikto
+    - If a dependency is missing, the script prompts to install it automatically.
 
-2. **Subdomain Collection**
-   - Combines:
-     - Manual subdomains from `-sd`
-     - Passive scan results from `-sdscan` / `-sdscanb`
-   - Deduplicates the list.
-   - Saves final subdomains to a timestamped file in `reports/`.
+2.  **Subdomain Collection**
+    - **Always includes the main domain** in the scan.
+    - Combines:
+      - Manual subdomains from `-sd`
+      - Passive scan results from `-sdscan` / `-sdscanb`
+    - Deduplicates the list.
+    - Saves final subdomains to a timestamped file in `reports/`.
+    - Presents the final list categorized into **Main Domain**, **Provided Subdomains**, and **Discovered Subdomains**.
 
-3. **Scanning Each Target**
-   - **WhatWeb**: Fingerprints web technologies.
-   - **Nmap**: Runs service/version detection and vulnerability scripts.
-   - **Nikto**: Runs in the background, scanning for web vulnerabilities.
+3.  **Scanning Each Target**
+    - **WhatWeb**: Fingerprints web technologies.
+    - **Nmap**: Runs service/version detection and vulnerability scripts.
+    - **Nikto**: Runs in the background, scanning for web vulnerabilities.
 
-4. **Nikto Result Processing**
-   - After all Nikto scans finish, results are displayed:
-     - **Red** → High severity (`OSVDB`, `CVE`, `exploit`, `VULNERABLE`)
-     - **Yellow** → Warnings / potential issues
-     - **Green** → Informational messages
+4.  **Nikto Result Processing**
+    - After all Nikto scans finish, results are displayed:
+      - **Red** → High severity (`OSVDB`, `CVE`, `exploit`, `VULNERABLE`)
+      - **Yellow** → Warnings / potential issues
+      - **Green** → Informational messages
 
-5. **Report Storage**
-   - All raw Nikto scan results are saved to the `reports/` directory.
-   - Subdomain list is also saved for reference.
+5.  **Report Storage**
+    - All raw Nikto scan results are saved to the `reports/` directory.
+    - The subdomain list is also saved for reference.
 
 ---
 
@@ -65,4 +67,4 @@ It color-codes results by severity and stores scan reports in the `reports/` dir
 ./scanner.sh -d example.com -sdscan -tn
 
 # Scan example.com with custom subdomains
-./scanner.sh -d example.com -sd www.example.com,api.example.com
+./scanner.sh -d example.com -sd [www.example.com](https://www.example.com),api.example.com
