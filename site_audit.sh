@@ -81,6 +81,12 @@ fi
 
 mkdir -p reports
 
+# Set up logging to both a file and the console
+TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
+LOG_FILE="reports/audit_log_$DOMAIN_$TIMESTAMP.txt"
+# This function redirects all output, including stderr, to the log file while also displaying it on the console.
+exec > >(tee -a "$LOG_FILE") 2>&1
+
 # ========================
 # Subdomain Gathering
 # ========================
@@ -113,7 +119,6 @@ fi
 ALL_DOMAINS=($(printf "%s\n" "${ALL_DOMAINS[@]}" | sort -u))
 
 # Save & Display subdomains
-TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 SUB_FILE="reports/subdomains_$DOMAIN_$TIMESTAMP.txt"
 printf "%s\n" "${ALL_DOMAINS[@]}" > "$SUB_FILE"
 
@@ -152,7 +157,7 @@ scan_domain() {
 
     # Nmap
     echo -e "${CYAN}[INFO]${RESET} Running Nmap..."
-    nmap -sV --script vuln "$target" | sed "s/^|/${YELLOW}|${RESET}/" | sed "s/^$target/${CYAN}$target${RESET}/"
+    NMAP_COLOR=always nmap -sV --script vuln "$target"
 
     # Nikto (background)
     echo -e "${CYAN}[INFO]${RESET} Running Nikto (background)..."
@@ -166,6 +171,9 @@ scan_domain() {
 # ========================
 # Run Scans
 # ========================
+echo -e "${CYAN}[INFO]${RESET} Starting scans...${RESET}"
+START_TIME=$(date +%s)
+
 for dom in "${ALL_DOMAINS[@]}"; do
     scan_domain "$dom"
 done
@@ -187,3 +195,10 @@ while IFS= read -r line; do
         echo "$line"
     fi
 done < <(grep -H "" reports/nikto_*_${TIMESTAMP}.txt)
+
+# ========================
+# Timer
+# ========================
+END_TIME=$(date +%s)
+ELAPSED_TIME=$((END_TIME - START_TIME))
+echo -e "${GREEN}[INFO]${RESET} All scans finished in ${ELAPSED_TIME} seconds."
